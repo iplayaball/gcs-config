@@ -1,0 +1,139 @@
+set sw=2    " 设定 << 和 >> 命令移动时的宽度为 2
+set ts=2    " 设定 tab 长度为 2
+set incsearch   " 输入搜索内容时就显示搜索结果
+set smartindent " 开启新行时使用智能自动缩进
+inoremap jj <esc>
+set et
+set smarttab
+set lbr
+set fo+=mB
+set sm
+set selection=inclusive
+set wildmenu
+set mousemodel=popup
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 显示相关  
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+syntax on
+"set whichwrap+=<,>,h,l   " 允许backspace和光标键跨越行边界(不建议)  
+set scrolloff=3     " 光标移动到buffer的顶部和底部时保持3行距离  
+set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}   "状态行显示的内容  
+set laststatus=2    " 启动显示状态行(1),总是显示状态行(2)  
+"set foldenable      " 允许折叠  
+""set foldmethod=manual   " 手动折叠  
+set nocompatible  "去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限  
+" 显示中文帮助
+if version >= 603
+    set helplang=cn
+    set encoding=utf-8
+endif
+" 自动缩进
+set autoindent
+set cindent
+" Tab键的宽度
+set tabstop=2
+" 统一缩进为2
+set softtabstop=2
+set shiftwidth=2
+" 不要用空格代替制表符
+set expandtab
+" 在行和段开始处使用制表符
+set smarttab
+" 显示行号
+set number
+" 历史记录数
+set history=1000
+"搜索逐字符高亮
+set hlsearch
+"语言设置
+set langmenu=zh_CN.UTF-8
+set helplang=cn
+" 总是显示状态行
+set cmdheight=2
+" 侦测文件类型
+filetype on
+" 载入文件类型插件
+filetype plugin on
+" 为特定文件类型载入相关缩进文件
+filetype indent on
+" 保存全局变量
+set viminfo+=!
+" 带有如下符号的单词不要被换行分割
+set iskeyword+=_,$,@,%,#,-
+
+"将tab替换为空格
+nmap tt :%s/\t/    /g<CR>
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""新文件标题
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"新建 .sh, .py 文件，自动插入文件头 
+autocmd BufNewFile *.sh,*.py exec ":call SetTitle()" 
+""定义函数SetTitle，自动插入文件头 
+func SetTitle() 
+    "如果文件类型为.sh文件 
+    if &filetype == 'sh' 
+		call setline(1,"\#!/bin/bash")
+        call append(line("."), "\##########################################################################")
+		"call append(line(".")+1, "\# File Name: ".expand("%"))
+		call append(line(".")+2, "\# Author: wangdj")
+		call append(line(".")+3, "\# mail: wangdajunzy@163.com")
+		call append(line(".")+4, "\# Created Time: ".strftime("%c"))
+		call append(line(".")+5, "\##########################################################################")
+        call append(line(".")+6, "")
+    elseif &filetype == 'python'
+		call setline(1,"\#!/usr/bin/env python")
+        call append(line("."), "#coding=utf-8")
+        call append(line(".")+1, "\##########################################################################")
+		"call append(line(".")+2, "\# File Name: ".expand("%"))
+		call append(line(".")+3, "\# Author: wangdj")
+		call append(line(".")+4, "\# mail: wangdajunzy@163.com")
+		call append(line(".")+5, "\# Created Time: ".strftime("%c"))
+		call append(line(".")+6, "\##########################################################################")
+        call append(line(".")+7, "")
+    endif
+endfunc 
+autocmd BufNewFile * normal G
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"键盘命令
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"去空行  
+nnoremap <F2> :g/^\s*$/d<CR> 
+"比较文件  
+nnoremap <C-F2> :vert diffsplit 
+
+" 设置当文件被改动时自动载入
+set autoread
+"代码补全 
+set completeopt=preview,menu 
+
+"自动保存
+set autowrite
+
+" 不要使用vi的键盘模式，而是vim自己的
+set nocompatible
+" 去掉输入错误的提示声音
+set noeb
+" 在处理未保存或只读文件的时候，弹出确认
+set confirm
+
+"搜索忽略大小写
+set ignorecase
+
+
+"打开文件类型检测, 加了这句才可以用智能补全
+set completeopt=longest,menu
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set iskeyword+=.
+set termencoding=utf-8
+set encoding=utf8
+set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif

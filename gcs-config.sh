@@ -14,21 +14,24 @@ if ! echo $(pwd) |grep -q '^/home/'; then
   exit
 fi
 
-# git clone path
-gcsinitpath=gcs-config
+thisDir=$(cd $(dirname $0) && pwd )
+bashrc=~/.bashrc
+gcsCfg=.gcs-config
+
+if ! grep -q $gcsCfg $bashrc; then
+  echo '". ~/$gcsCfg/main_rc.sh" >> ~/.bashrc'
+  echo ". ~/$gcsCfg/main_rc.sh" >> ~/.bashrc
+fi
+
+# git
+git config --global core.editor vim
+
+exit
+
 
 # config vim
 cp -av $gcsinitpath/vimrc-min .vimrc
 
-# config history format
-grep -q 'HISTTIMEFORMAT=' .bashrc || echo 'export HISTTIMEFORMAT="%F %T "' >> .bashrc
-# config delete readme file
-grep -q 'README-cloudshell' .bashrc || echo 'rm -f README-cloudshell.txt' >> .bashrc
-# config time zone
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
-# config root home is userhome
-home=$(pwd)
 cat > .customize_environment << EOF
 #!/bin/bash
 

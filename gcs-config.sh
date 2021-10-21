@@ -14,6 +14,25 @@ if ! echo $(pwd) |grep -q '^/home/'; then
   exit
 fi
 
+# 配置 gcsh 启动时运行的命令
+home=`pwd`
+if ! [ -f .customize_environment ]; then
+cat > .customize_environment << EOF
+#!/bin/bash
+
+# config time zone
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+# root home change to user home
+sed -i "s#root:/root#root:$home#g" /etc/passwd
+
+#解决ipython3 报错
+# pip3 install -U jedi==0.17.2 parso==0.7.1
+# apt-get install -y tree expect ifstat
+
+EOF
+fi
+
+# 配置 ssh 登录时运行的 bash 环境配置
 # thisDir=$(cd $(dirname $0) && pwd )
 bashrc=~/.bashrc
 gcsCfg=.gcs-config
@@ -68,19 +87,6 @@ exit
 
 # config vim
 cp -av $gcsinitpath/vimrc-min .vimrc
-
-cat > .customize_environment << EOF
-#!/bin/bash
-
-# config time zone
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-# root home change to user home
-sed -i "s#root:/root#root:$home#g" /etc/passwd
-
-#解决ipython3 报错
-# pip3 install -U jedi==0.17.2 parso==0.7.1
-
-EOF
 
 #apt-get install -y dos2unix expect screen rsync
 

@@ -28,6 +28,41 @@ git config --global core.editor vim
 git config --global user.name "gcs-${HOME##*/}"
 git config --global user.email "wangdajunzy@163.com"
 
+args="rclone"
+if [ -n "$1" ]; then
+  for arg in "$@"; do
+    # 如果脚本的参数不在定义的 args 变量列表中，则退出脚本
+    if ! echo "$args" | grep -wq "$arg"; then
+      echo $arg is wrong
+      echo 'args': $args
+      exit
+    fi
+  done
+fi
+
+configRclone()
+{
+# config sa
+l="marvel-2500SA-marveltdste@985211.ml.zip\
+   marvel-800SA-mirrorone@googlegroups.com.zip\
+   wdjddf-1400SA-ttf0815@googlegroups.com.zip\
+   yinni-900SA-dxzdxz@googlegroups.com.zip"
+
+rclone=".gems/bin/rclone --config .config/rclone/rclone.conf"
+for i in $l; do
+  echored $i
+  $rclone sync -v gd:_af/$i .
+  unzip $i >/dev/null || echored "unzip $i fail"
+  rm -fv $i
+done
+}
+
+if [[ $1 == rclone ]]; then
+  echored configRclone
+  configRclone
+fi
+
+
 exit
 
 
@@ -73,19 +108,6 @@ else
   echored "no gclone.conf file"
 fi
 
-# config sa
-l="marvel-2500SA-marveltdste@985211.ml.zip\
-   marvel-800SA-mirrorone@googlegroups.com.zip\
-   wdjddf-1400SA-ttf0815@googlegroups.com.zip\
-   yinni-900SA-dxzdxz@googlegroups.com.zip"
-
-rclone="gopath/bin/rclone --config .config/rclone/rclone.conf"
-for i in $l; do
-  echored $i
-  $rclone copy -v gd:_af/$i .
-  unzip $i >/dev/null || echored "unzip $i fail"
-  rm -fv $i
-done
 
 #install rar
 #wget https://www.rarlab.com/rar/rarlinux-x64-5.9.1.tar.gz

@@ -25,6 +25,8 @@ fi
 
 # git
 git config --global core.editor vim
+git config --global user.name "gcs-${HOME##*/}"
+git config --global user.email "wangzhengyun0815@gmail.com"
 
 exit
 

@@ -14,7 +14,7 @@ if ! echo $(pwd) |grep -q '^/home/'; then
   exit
 fi
 
-thisDir=$(cd $(dirname $0) && pwd )
+# thisDir=$(cd $(dirname $0) && pwd )
 bashrc=~/.bashrc
 gcsCfg=.gcs-config
 

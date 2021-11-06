@@ -14,8 +14,11 @@ if ! echo $(pwd) |grep -q '^/home/'; then
   exit
 fi
 
-# 配置 gcsh 启动时运行的命令
 home=`pwd`
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+# root home change to user home
+sed -i "s#root:/root#root:$home#g" /etc/passwd
+# 配置 gcsh 启动时运行的命令
 if ! [ -f .customize_environment ]; then
 cat > .customize_environment << EOF
 #!/bin/bash
@@ -59,21 +62,20 @@ if [ -n "$1" ]; then
   done
 fi
 
-configRclone()
-{
-# config sa
-l="marvel-2500SA-marveltdste@985211.ml.zip\
-   marvel-800SA-mirrorone@googlegroups.com.zip\
-   wdjddf-1400SA-ttf0815@googlegroups.com.zip\
-   yinni-900SA-dxzdxz@googlegroups.com.zip"
+configRclone() {
+	# config sa
+	l="marvel-2500SA-marveltdste@985211.ml.zip\
+	   marvel-800SA-mirrorone@googlegroups.com.zip\
+	   wdjddf-1400SA-ttf0815@googlegroups.com.zip\
+	   yinni-900SA-dxzdxz@googlegroups.com.zip"
 
-rclone=".gems/bin/rclone --config .config/rclone/rclone.conf"
-for i in $l; do
-  echored $i
-  $rclone sync -v gd:_af/$i .
-  unzip $i >/dev/null || echored "unzip $i fail"
-  rm -fv $i
-done
+	rclone=".gems/bin/rclone --config .config/rclone/rclone.conf"
+	for i in $l; do
+	  echored $i
+	  $rclone sync -v gd:_af/$i .
+	  unzip $i >/dev/null || echored "unzip $i fail"
+	  rm -fv $i
+	done
 }
 
 if [[ $1 == rclone ]]; then
@@ -82,11 +84,8 @@ if [[ $1 == rclone ]]; then
 fi
 
 
-exit
-
-
 # config vim
-cp -av $gcsinitpath/vimrc-min .vimrc
+cp -av $gcsCfg/vimrc-min .vimrc
 
 #apt-get install -y dos2unix expect screen rsync
 
@@ -96,20 +95,20 @@ cp -av $gcsinitpath/vimrc-min .vimrc
 
 
 # install gclone as rclone
-if ! [ -f gopath/bin/rclone ]; then
+if ! [ -f .gems/bin/rclone ]; then
   wget https://github.com/donwa/gclone/releases/download/v1.51.0-mod1.3.1/gclone_1.51.0-mod1.3.1_Linux_x86_64.gz
   gunzip gclone_1.51.0-mod1.3.1_Linux_x86_64.gz
-  mkdir -p gopath/bin
-  mv -v gclone_1.51.0-mod1.3.1_Linux_x86_64 gopath/bin/rclone
-  chmod +x gopath/bin/rclone
+  mkdir -p .gems/bin
+  mv -v gclone_1.51.0-mod1.3.1_Linux_x86_64 .gems/bin/rclone
+  chmod +x .gems/bin/rclone
 else
-  echored "rclone already install in gopath/bin/rclone" 
+  echored "rclone already install in .gems/bin/rclone" 
 fi
 
 # config gclone as rclone
-if [ -f $gcsinitpath/rclone.conf ]; then
+if [ -f $gcsCfg/rclone.conf ]; then
   mkdir -p .config/rclone/
-  cp -av $gcsinitpath/rclone.conf .config/rclone/
+  cp -av $gcsCfg/rclone.conf .config/rclone/
 else
   echored "no gclone.conf file"
 fi

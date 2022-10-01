@@ -9,6 +9,7 @@ echored(){
   echo -e "\e[31m$*\e[0m"
 }
 
+# 必须在 gcs 默认创建的普通用户家目录下运行此脚本
 if ! echo $(pwd) |grep -q '^/home/'; then
   echored 'not home'
   exit
@@ -18,7 +19,7 @@ home=`pwd`
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 # root home change to user home
 sed -i "s#root:/root#root:$home#g" /etc/passwd
-# 配置 gcsh 启动时运行的命令
+# 配置 gcsh 启动时自动运行的命令
 if ! [ -f .customize_environment ]; then
 cat > .customize_environment << EOF
 #!/bin/bash
@@ -60,39 +61,6 @@ cat > .customize_environment << EOF
 EOF
 fi
 
-args="rclone"
-if [ -n "$1" ]; then
-  for arg in "$@"; do
-    # 如果脚本的参数不在定义的 args 变量列表中，则退出脚本
-    if ! echo "$args" | grep -wq "$arg"; then
-      echo $arg is wrong
-      echo 'args': $args
-      exit
-    fi
-  done
-fi
-
-configRclone() {
-	# config sa
-	l="marvel-2500SA-marveltdste@985211.ml.zip\
-	   marvel-800SA-mirrorone@googlegroups.com.zip\
-	   wdjddf-1400SA-ttf0815@googlegroups.com.zip\
-	   yinni-900SA-dxzdxz@googlegroups.com.zip"
-
-	rclone=".gems/bin/rclone --config .config/rclone/rclone.conf"
-	for i in $l; do
-	  echored $i
-	  $rclone sync -v gd:_af/$i .
-	  unzip $i >/dev/null || echored "unzip $i fail"
-	  rm -fv $i
-	done
-}
-
-if [[ $1 == rclone ]]; then
-  echored configRclone
-  configRclone
-fi
-
 
 # config vim
 cp -av $gcsCfg/vimrc-min .vimrc
@@ -112,7 +80,7 @@ if ! [ -f .gems/bin/rclone ]; then
   mv -v gclone_1.51.0-mod1.3.1_Linux_x86_64 .gems/bin/rclone
   chmod +x .gems/bin/rclone
 else
-  echored "rclone already install in .gems/bin/rclone" 
+  echored "rclone already install in .gems/bin/rclone"
 fi
 
 # config gclone as rclone
@@ -123,6 +91,38 @@ else
   echored "no gclone.conf file"
 fi
 
+
+args="rclone"
+if [ -n "$1" ]; then
+  for arg in "$@"; do
+    # 如果脚本的参数不在定义的 args 变量列表中，则退出脚本
+    if ! echo "$args" | grep -wq "$arg"; then
+      echo $arg is wrong
+      echo 'args': $args
+      exit
+    fi
+  done
+fi
+
+configRclone() {
+  # config sa
+  l="marvel-2500SA-marveltdste@985211.ml.zip\
+  marvel-800SA-mirrorone@googlegroups.com.zip\
+  wdjddf-1400SA-ttf0815@googlegroups.com.zip"
+  
+  rclone=".gems/bin/rclone --config .config/rclone/rclone.conf"
+  for i in $l; do
+    echored $i
+    $rclone sync -v gd:_af/$i .
+    unzip $i >/dev/null || echored "unzip $i fail"
+    rm -fv $i
+  done
+}
+
+if [[ $1 == rclone ]]; then
+  echored configRclone
+  configRclone
+fi
 
 #install rar
 #wget https://www.rarlab.com/rar/rarlinux-x64-5.9.1.tar.gz

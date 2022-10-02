@@ -38,12 +38,11 @@ fi
 
 # 配置 ssh 登录时运行的 bash 环境配置
 # thisDir=$(cd $(dirname $0) && pwd )
-bashrc=~/.bashrc
 gcsCfg=.gcs-config
 
-if ! grep -q $gcsCfg $bashrc; then
-  echo '". ~/$gcsCfg/main_rc.sh" >> ~/.bashrc'
-  echo ". ~/$gcsCfg/main_rc.sh" >> ~/.bashrc
+if ! grep -q $gcsCfg .bashrc; then
+  echo '". ~/$gcsCfg/main_rc.sh" >> .bashrc'
+  echo ". ~/$gcsCfg/main_rc.sh" >> .bashrc
 fi
 
 # git

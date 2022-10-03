@@ -50,7 +50,7 @@ fi
 #git config --global user.name "gcs-${HOME##*/}"
 #git config --global user.email "wangdajunzy@163.com"
 if ! [ -f .gitconfig ]; then
-cat > .customize_environment << EOF
+cat > .gitconfig << EOF
 [core]
   editor = vim
 [user]

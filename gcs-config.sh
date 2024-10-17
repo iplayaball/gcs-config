@@ -103,7 +103,7 @@ installRclone() {
   else
     echored "no gclone.conf file"
   fi
-fi
+}
 
 configRclone() {
   # config sa

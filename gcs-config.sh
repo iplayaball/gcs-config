@@ -39,6 +39,7 @@ fi
 # 配置 ssh 登录时运行的 bash 环境配置
 # thisDir=$(cd $(dirname $0) && pwd )
 gcsCfg=.gcs-config
+! [ -d $gcsCfg/ ] && echored ".gcs-config not exist" && exit
 
 if ! grep -q $gcsCfg .bashrc; then
   echo '". ~/$gcsCfg/main_rc.sh" >> .bashrc'

@@ -70,27 +70,6 @@ cp -av $gcsCfg/vimrc-min .vimrc
 #echo "logfile $home/logsc/screen-%S_%Y-%m-%d-%c.log" >> /etc/screenrc
 #EOF
 
-
-# install gclone as rclone
-if ! [ -f .gems/bin/rclone ]; then
-  wget https://github.com/donwa/gclone/releases/download/v1.51.0-mod1.3.1/gclone_1.51.0-mod1.3.1_Linux_x86_64.gz
-  gunzip gclone_1.51.0-mod1.3.1_Linux_x86_64.gz
-  mkdir -p .gems/bin
-  mv -v gclone_1.51.0-mod1.3.1_Linux_x86_64 .gems/bin/rclone
-  chmod +x .gems/bin/rclone
-else
-  echored "rclone already install in .gems/bin/rclone"
-fi
-
-# config gclone as rclone
-if [ -f $gcsCfg/rclone.conf ]; then
-  mkdir -p .config/rclone/
-  cp -av $gcsCfg/rclone.conf .config/rclone/
-else
-  echored "no gclone.conf file"
-fi
-
-
 args="rclone"
 if [ -n "$1" ]; then
   for arg in "$@"; do
@@ -101,6 +80,28 @@ if [ -n "$1" ]; then
       exit
     fi
   done
+fi
+
+
+installRclone() {
+  # install gclone as rclone
+  if ! [ -f .gems/bin/rclone ]; then
+    wget https://github.com/donwa/gclone/releases/download/v1.51.0-mod1.3.1/gclone_1.51.0-mod1.3.1_Linux_x86_64.gz
+    gunzip gclone_1.51.0-mod1.3.1_Linux_x86_64.gz
+    mkdir -p .gems/bin
+    mv -v gclone_1.51.0-mod1.3.1_Linux_x86_64 .gems/bin/rclone
+    chmod +x .gems/bin/rclone
+  else
+    echored "rclone already install in .gems/bin/rclone"
+  fi
+
+  # config gclone as rclone
+  if [ -f $gcsCfg/rclone.conf ]; then
+    mkdir -p .config/rclone/
+    cp -av $gcsCfg/rclone.conf .config/rclone/
+  else
+    echored "no gclone.conf file"
+  fi
 fi
 
 configRclone() {
@@ -120,6 +121,7 @@ configRclone() {
 
 if [[ $1 == rclone ]]; then
   echored configRclone
+  installRclone
   configRclone
 fi
 
